@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Simple iTunes List</string>
+    <string name="title_list">Home</string>
+    <string name="title_bookmarks">Bookmarks</string>
+</resources>
