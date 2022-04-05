@@ -5,44 +5,36 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kalok.simpleituneslist.models.Album
-import com.kalok.simpleituneslist.repositories.AlbumApi
-import com.kalok.simpleituneslist.repositories.AlbumRepository
+import com.kalok.simpleituneslist.repositories.NetworkAlbumRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 
 class HomeViewModel : ViewModel() {
     private var _albums = MutableLiveData<ArrayList<Album>>()
     val albumValue: LiveData<ArrayList<Album>>
         get() = _albums
-    private val repo = AlbumRepository()
     private var myCompositeDisposable: CompositeDisposable? = null
 
     init {
         myCompositeDisposable = CompositeDisposable()
+        // Init mutable data value
         _albums.value = ArrayList()
     }
 
     fun fetchAlbums() {
-        val requestInterface = Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .build().create(AlbumApi::class.java)
+        // Get repo
+        val repo = NetworkAlbumRepository.instance.api
 
-        myCompositeDisposable?.add(requestInterface.getAlbums()
+        // Subscribe to API call response
+        myCompositeDisposable?.add(repo.getAlbums()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ albumResponse ->
-                val albums = ArrayList<Album>()
-                for (album in albumResponse.results) {
-                    albums.add(album)
-                }
-                _albums.value = albums
+                // Get album list from response
+                _albums.value = albumResponse.results
             }, {
+                // Handle error
                 Log.d("album", it.message!!)
             }))
     }
