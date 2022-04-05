@@ -4,18 +4,40 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.kalok.simpleituneslist.R
 import com.kalok.simpleituneslist.databinding.AlbumItemRowBinding
 import com.kalok.simpleituneslist.models.Album
 import com.squareup.picasso.Picasso
 
 class AlbumAdapter(private val albums: ArrayList<Album>): RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
-    inner class ViewHolder(val binding: AlbumItemRowBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(album: Album) {
+    inner class ViewHolder(private val _binding: AlbumItemRowBinding): RecyclerView.ViewHolder(_binding.root) {
+        fun bind(album: Album, position: Int) {
             // Bind data to row item view
-            with(binding) {
+            with(_binding) {
                 albumNameTextview.text = album.collectionName
+                // Use Picasso to load image from URL
                 Picasso.get().load(album.artworkUrl60).fit()
                     .placeholder(android.R.color.darker_gray).into(artworkImageView)
+
+                // Set bookmark icon according to bookmark flag in album
+                if (album.bookmarked) {
+                    bookmarkImageView.setImageResource(R.drawable.outline_bookmark_24)
+                } else {
+                    bookmarkImageView.setImageResource(R.drawable.outline_bookmark_border_24)
+                }
+
+                // Set on click listener for bookmark icon
+                bookmarkImageView.setOnClickListener {
+                    if (!album.bookmarked) {
+                        // If album is not bookmarked, bookmark the album and set the icon to solid
+                        bookmarkImageView.setImageResource(R.drawable.outline_bookmark_24)
+                        album.bookmarked = true
+                    } else {
+                        // If album is bookmarked, remove the album from bookmark and set the icon to outline
+                        bookmarkImageView.setImageResource(R.drawable.outline_bookmark_border_24)
+                        album.bookmarked = false
+                    }
+                }
             }
         }
     }
@@ -39,7 +61,7 @@ class AlbumAdapter(private val albums: ArrayList<Album>): RecyclerView.Adapter<A
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(albums[position])
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(albums[position], position)
 
     override fun getItemCount(): Int = albums.size
 }

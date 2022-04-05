@@ -1,3 +1,6 @@
 package com.kalok.simpleituneslist.models
 
-data class DataResult(val resultCount: Int, val results: List<Album>)
+data class DataResult(
+    val resultCount: Int,
+    val results: ArrayList<Album>
+    )
