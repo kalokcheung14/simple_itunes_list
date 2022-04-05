@@ -31,21 +31,38 @@ class HomeFragment : Fragment() {
         val homeViewModel =
             ViewModelProvider(this)[HomeViewModel::class.java]
 
+        // Get LinearLayoutManager for RecyclerView
         viewManager = LinearLayoutManager(context)
 
         val albumRecyclerView = binding.albumRecyclerView
 
+        // Fetch data
         homeViewModel.fetchAlbums()
+
+        // Observe for album list to update
         viewAdapter = AlbumAdapter(homeViewModel.albumValue.value!!)
         homeViewModel.albumValue.observe(viewLifecycleOwner) {
+            // Update the recycler view data when update is observed
             viewAdapter.setDataset(it)
         }
 
+        // set up recycler view
         albumRecyclerView.apply {
             setHasFixedSize(true)
             minimumHeight = 90
             layoutManager = viewManager
             adapter = viewAdapter
+        }
+
+        // Handle progress bar show and hide
+        val progressBar = binding.progressBar
+        progressBar.show()
+
+        homeViewModel.dataLoaded.observe(viewLifecycleOwner) { loaded ->
+            // If data is loaded, hide the progress bar
+            if (loaded) {
+                progressBar.hide()
+            }
         }
 
         return root

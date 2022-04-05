@@ -6,18 +6,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kalok.simpleituneslist.R
 import com.kalok.simpleituneslist.databinding.AlbumItemRowBinding
-import com.kalok.simpleituneslist.models.Album
-import com.squareup.picasso.Picasso
+import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
 
-class AlbumAdapter(private val albums: ArrayList<Album>): RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
+class AlbumAdapter(private val albums: ArrayList<AlbumViewModel>): RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
     inner class ViewHolder(private val _binding: AlbumItemRowBinding): RecyclerView.ViewHolder(_binding.root) {
-        fun bind(album: Album, position: Int) {
+        fun bind(album: AlbumViewModel) {
             // Bind data to row item view
             with(_binding) {
-                albumNameTextview.text = album.collectionName
-                // Use Picasso to load image from URL
-                Picasso.get().load(album.artworkUrl60).fit()
-                    .placeholder(android.R.color.darker_gray).into(artworkImageView)
+                albumNameTextview.text = album.albumName
+                album.artwork?.into(artworkImageView)
 
                 // Set bookmark icon according to bookmark flag in album
                 if (album.bookmarked) {
@@ -42,7 +39,7 @@ class AlbumAdapter(private val albums: ArrayList<Album>): RecyclerView.Adapter<A
         }
     }
 
-    fun setDataset(data : ArrayList<Album>) {
+    fun setDataset(data : ArrayList<AlbumViewModel>) {
         // Check data differences
         val diffCallback = ItemListDiffUtil(albums, data)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
@@ -61,7 +58,7 @@ class AlbumAdapter(private val albums: ArrayList<Album>): RecyclerView.Adapter<A
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(albums[position], position)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(albums[position])
 
     override fun getItemCount(): Int = albums.size
 }
