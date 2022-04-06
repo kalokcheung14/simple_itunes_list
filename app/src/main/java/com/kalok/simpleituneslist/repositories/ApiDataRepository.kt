@@ -4,8 +4,8 @@ import com.kalok.simpleituneslist.models.DataResult
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.http.GET
 
-open class AlbumRepository {
-    lateinit var api: AlbumApi
+open class ApiDataRepository {
+    lateinit var api: DataApi
 
     var cachedAlbum = DataResult(0, ArrayList())
 
@@ -28,7 +28,7 @@ open class AlbumRepository {
     }
 }
 
-interface AlbumApi {
+interface DataApi {
     @GET("search?term=jack+johnson&entity=album")
     fun getAlbums(): Observable<DataResult>
 }
