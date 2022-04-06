@@ -12,13 +12,12 @@ import com.kalok.simpleituneslist.adapters.AlbumAdapter
 import com.kalok.simpleituneslist.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
-
     private var _binding: FragmentHomeBinding? = null
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var viewAdapter : AlbumAdapter
-    private lateinit var viewManager : RecyclerView.LayoutManager
+    private lateinit var _viewAdapter : AlbumAdapter
+    private lateinit var _viewManager : RecyclerView.LayoutManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,8 +30,12 @@ class HomeFragment : Fragment() {
         val homeViewModel =
             ViewModelProvider(this)[HomeViewModel::class.java]
 
+        // Handle progress bar show and hide
+        val progressBar = binding.progressBar
+        progressBar.show()
+
         // Get LinearLayoutManager for RecyclerView
-        viewManager = LinearLayoutManager(context)
+        _viewManager = LinearLayoutManager(context)
 
         val albumRecyclerView = binding.albumRecyclerView
 
@@ -40,29 +43,19 @@ class HomeFragment : Fragment() {
         homeViewModel.fetchAlbums()
 
         // Observe for album list to update
-        viewAdapter = AlbumAdapter(homeViewModel.albumValue.value!!)
+        _viewAdapter = AlbumAdapter(homeViewModel.albumValue.value!!)
         homeViewModel.albumValue.observe(viewLifecycleOwner) {
             // Update the recycler view data when update is observed
-            viewAdapter.setDataset(it)
+            _viewAdapter.setDataset(it)
+            progressBar.hide()
         }
 
         // set up recycler view
         albumRecyclerView.apply {
             setHasFixedSize(true)
             minimumHeight = 90
-            layoutManager = viewManager
-            adapter = viewAdapter
-        }
-
-        // Handle progress bar show and hide
-        val progressBar = binding.progressBar
-        progressBar.show()
-
-        homeViewModel.dataLoaded.observe(viewLifecycleOwner) { loaded ->
-            // If data is loaded, hide the progress bar
-            if (loaded) {
-                progressBar.hide()
-            }
+            layoutManager = _viewManager
+            adapter = _viewAdapter
         }
 
         return root
