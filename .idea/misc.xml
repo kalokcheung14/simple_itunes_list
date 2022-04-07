@@ -7,12 +7,13 @@
         <entry key="app/src/main/res/drawable/outline_bookmark_24.xml" value="0.104" />
         <entry key="app/src/main/res/drawable/outline_bookmark_border_24.xml" value="0.104" />
         <entry key="app/src/main/res/drawable/outline_list_24.xml" value="0.104" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/album_item_row.xml" value="0.20977443609022556" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.22873840332031248" />
+        <entry key="app/src/main/res/layout/album_item_row.xml" value="0.16205533596837945" />
         <entry key="app/src/main/res/layout/fragment_bookmark.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_bookmarks.xml" value="0.38189987163029526" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.31012683778297245" />
         <entry key="app/src/main/res/layout/item_selector.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/shimmer_placeholder_layout.xml" value="0.4009878372436803" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
       </map>
     </option>

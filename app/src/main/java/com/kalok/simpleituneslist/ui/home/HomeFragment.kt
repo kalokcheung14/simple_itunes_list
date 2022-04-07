@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.kalok.simpleituneslist.adapters.AlbumAdapter
 import com.kalok.simpleituneslist.adapters.HomeListAdapter
 import com.kalok.simpleituneslist.databinding.FragmentHomeBinding
@@ -22,6 +23,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var _viewAdapter : AlbumAdapter
     private lateinit var _viewManager : RecyclerView.LayoutManager
+    private lateinit var _shimmerLayout: ShimmerFrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,14 +36,17 @@ class HomeFragment : Fragment() {
         val homeViewModel =
             ViewModelProvider(this)[HomeViewModel::class.java]
 
-        // Handle progress bar show and hide
-        val progressBar = binding.progressBar
-        progressBar.show()
+        // Use Shimmer Layout to display shimmer loading screen
+        _shimmerLayout = binding.shimmerLayout
+        _shimmerLayout.visibility = View.VISIBLE
+        _shimmerLayout.startShimmer()
 
         // Get LinearLayoutManager for RecyclerView
         _viewManager = LinearLayoutManager(context)
 
         val albumRecyclerView = binding.albumRecyclerView
+        // Set recycler view invisible at the beginning for loading
+        albumRecyclerView.visibility = View.INVISIBLE
 
         // Fetch data
         homeViewModel.fetchData()
@@ -49,9 +54,12 @@ class HomeFragment : Fragment() {
         // Observe for album list to update
         _viewAdapter = HomeListAdapter(homeViewModel.albumValue.value!!)
         homeViewModel.albumValue.observe(viewLifecycleOwner) {
-            // Update the recycler view data when update is observed
-            _viewAdapter.setDataset(it)
-            progressBar.hide()
+            if (it.isNotEmpty()) {
+                // Update the recycler view data when update is observed
+                _viewAdapter.setDataset(it)
+                _shimmerLayout.stopShimmer()
+                albumRecyclerView.visibility = View.VISIBLE
+            }
         }
 
         // Retain recycler view scroll position when fragment reattached

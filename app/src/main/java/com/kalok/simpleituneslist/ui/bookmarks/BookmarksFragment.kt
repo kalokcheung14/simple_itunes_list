@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.kalok.simpleituneslist.adapters.AlbumAdapter
 import com.kalok.simpleituneslist.adapters.BookmarkListAdapter
 import com.kalok.simpleituneslist.databinding.FragmentBookmarksBinding
@@ -21,6 +22,7 @@ class BookmarksFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var _viewAdapter : AlbumAdapter
     private lateinit var _viewManager : RecyclerView.LayoutManager
+    private lateinit var _shimmerLayout: ShimmerFrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,11 +35,14 @@ class BookmarksFragment : Fragment() {
         _binding = FragmentBookmarksBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Handle progress bar show and hide
-        val progressBar = binding.progressBar
-        progressBar.show()
+        // Use Shimmer Layout to display shimmer loading screen
+        _shimmerLayout = binding.shimmerLayout
+        _shimmerLayout.visibility = View.VISIBLE
+        _shimmerLayout.startShimmer()
 
         val albumRecyclerView = binding.albumRecyclerView
+        // Set recycler view invisible at the beginning for loading
+        albumRecyclerView.visibility = View.INVISIBLE
 
         // Set up viewManager to handle recycler view row layout
         _viewManager = LinearLayoutManager(context)
@@ -53,6 +58,9 @@ class BookmarksFragment : Fragment() {
 
         // Observe for album list
         bookmarksViewModel.albumValue.observe(viewLifecycleOwner) {
+            // Stop Shimmer animation
+            _shimmerLayout.stopShimmer()
+
             // Update the recycler view data when update is observed
             if (it.isEmpty()) {
                 // If album list is empty
@@ -64,8 +72,9 @@ class BookmarksFragment : Fragment() {
                 noBookmarkTextView.visibility = View.GONE
                 // Load the data to adapter if the list is not empty
                 _viewAdapter.setDataset(it)
+                // Set recycler view to visible to display data
+                albumRecyclerView.visibility = View.VISIBLE
             }
-            progressBar.hide()
         }
 
         // Retain recycler view scroll position when fragment reattached
