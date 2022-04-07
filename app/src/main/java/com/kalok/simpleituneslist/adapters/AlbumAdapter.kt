@@ -2,18 +2,17 @@ package com.kalok.simpleituneslist.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kalok.simpleituneslist.R
 import com.kalok.simpleituneslist.databinding.AlbumItemRowBinding
 import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
 
-class AlbumAdapter(private val albums: ArrayList<AlbumViewModel>, private val type: Type = Type.ALBUM): RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
-    enum class Type {
-        ALBUM,
-        BOOKMARKED
-    }
-
+abstract class AlbumAdapter(
+    protected var _albums: ArrayList<AlbumViewModel>,
+    protected val _parentViewModel: ViewModel? = null
+): RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
     inner class ViewHolder(private val _binding: AlbumItemRowBinding): RecyclerView.ViewHolder(_binding.root) {
         fun bind(album: AlbumViewModel, position: Int) {
             // Bind data to row item view
@@ -41,15 +40,7 @@ class AlbumAdapter(private val albums: ArrayList<AlbumViewModel>, private val ty
                             // If album is bookmarked, remove the album from bookmark and set the icon to outline
                             bookmarkImageView.setImageResource(R.drawable.outline_bookmark_border_24)
                             album.setBookmark(false)
-                            when (type) {
-                                // Remove item from bookmark list and notify UI row item change
-                                Type.BOOKMARKED -> {
-                                    albums.remove(album)
-                                    notifyItemRemoved(position)
-                                }
-                                // Update display
-                                Type.ALBUM -> notifyItemChanged(position)
-                            }
+                            handleRemoveBookmark(album, position)
                         }
                     }
                 }
@@ -57,16 +48,18 @@ class AlbumAdapter(private val albums: ArrayList<AlbumViewModel>, private val ty
         }
     }
 
+    abstract fun handleRemoveBookmark(album: AlbumViewModel, position: Int)
+
     fun setDataset(data : ArrayList<AlbumViewModel>) {
         // Check data differences
-        val diffCallback = ItemListDiffUtil(albums, data)
+        val diffCallback = ItemListDiffUtil(_albums, data)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         // Update data when they are different
         diffResult.dispatchUpdatesTo(this)
 
         // Clear album and fill data set
-        albums.clear()
-        albums.addAll(data)
+        _albums.clear()
+        _albums.addAll(data)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -76,7 +69,7 @@ class AlbumAdapter(private val albums: ArrayList<AlbumViewModel>, private val ty
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(albums[position], position)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(_albums[position], position)
 
-    override fun getItemCount(): Int = albums.size
+    override fun getItemCount(): Int = _albums.size
 }

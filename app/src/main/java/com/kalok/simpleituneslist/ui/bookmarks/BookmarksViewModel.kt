@@ -58,6 +58,10 @@ class BookmarksViewModel @Inject constructor(
         }
     }
 
+    fun setAlbumView(albums: ArrayList<AlbumViewModel>) {
+        this.albums.value = albums
+    }
+
     override fun onCleared() {
         // Dispose API call
         _compositeDisposable.dispose()

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.kalok.simpleituneslist.adapters.AlbumAdapter
+import com.kalok.simpleituneslist.adapters.HomeListAdapter
 import com.kalok.simpleituneslist.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,7 +47,7 @@ class HomeFragment : Fragment() {
         homeViewModel.fetchData()
 
         // Observe for album list to update
-        _viewAdapter = AlbumAdapter(homeViewModel.albumValue.value!!)
+        _viewAdapter = HomeListAdapter(homeViewModel.albumValue.value!!)
         homeViewModel.albumValue.observe(viewLifecycleOwner) {
             // Update the recycler view data when update is observed
             _viewAdapter.setDataset(it)

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kalok.simpleituneslist.adapters.AlbumAdapter
+import com.kalok.simpleituneslist.adapters.BookmarkListAdapter
 import com.kalok.simpleituneslist.databinding.FragmentBookmarksBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,7 +42,7 @@ class BookmarksFragment : Fragment() {
         // Set up viewManager to handle recycler view row layout
         _viewManager = LinearLayoutManager(context)
         // Set up view adapter for recycler view dataset
-        _viewAdapter = AlbumAdapter(bookmarksViewModel.albumValue.value!!, AlbumAdapter.Type.BOOKMARKED)
+        _viewAdapter = BookmarkListAdapter(bookmarksViewModel.albumValue.value!!, bookmarksViewModel)
 
         // Set no bookmark notice invisible
         val noBookmarkTextView = binding.noBookmarkTextview
