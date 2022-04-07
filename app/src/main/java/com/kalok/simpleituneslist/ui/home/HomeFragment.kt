@@ -50,6 +50,9 @@ class HomeFragment : Fragment() {
             progressBar.hide()
         }
 
+        // Retain recycler view scroll position when fragment reattached
+        _viewAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
         // set up recycler view
         albumRecyclerView.apply {
             setHasFixedSize(true)
