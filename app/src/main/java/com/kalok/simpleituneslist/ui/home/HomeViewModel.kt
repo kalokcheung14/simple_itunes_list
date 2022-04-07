@@ -30,21 +30,24 @@ class HomeViewModel @Inject constructor(
     }
 
     fun fetchData() {
-        // Subscribe to API call response
+        var bookmarkAlbumList: List<Album> = emptyList()
         var networkAlbumList: List<Album> = emptyList()
-        _repo.getAlbums()
-            .subscribeOn(Schedulers.io())
-            .concatMapSingle {
-                // Save API album list
-                networkAlbumList = it.results
-
-                // Read bookmarked albums from database
-                _dbHelper.getAlbumDao()!!.getAll()
+        // Subscribe to database call response
+        _dbHelper.getAlbumDao()?.apply {
+            getAll()
+            .flatMapObservable { albumList ->
+                bookmarkAlbumList = albumList
+                
+                // Get API response for albums
+                _repo.getAlbums().map { dataResult ->
+                    networkAlbumList = dataResult.results
+                }
             }
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ bookmarkList ->
+            .subscribe({
                 // Get a list of collection ID of bookmarked albums
-                val bookmarkCollectionIdList = bookmarkList.map { it.collectionId }
+                val bookmarkCollectionIdList = bookmarkAlbumList.map { it.collectionId }
 
                 // Get album list from response and replace the current list
                 val albumList = ArrayList<AlbumViewModel>()
@@ -62,7 +65,7 @@ class HomeViewModel @Inject constructor(
                 })
 
                 // Update list
-                    albums.value = albumList
+                albums.value = albumList
             }, {
                 // Handle error
                 Log.d("album", it.message ?: "No error message")
@@ -70,12 +73,13 @@ class HomeViewModel @Inject constructor(
                 // Store disposable API call in composite disposable object
                 _compositeDisposable.add(it)
             }
+        }
     }
 
     override fun onCleared() {
-        // Dispose API call
-        _compositeDisposable.dispose()
+        // Dispose Data streams
         _compositeDisposable.clear()
+//        _compositeDisposable.dispose()
         super.onCleared()
     }
 }
