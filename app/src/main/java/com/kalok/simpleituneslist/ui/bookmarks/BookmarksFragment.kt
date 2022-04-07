@@ -43,7 +43,7 @@ class BookmarksFragment : Fragment() {
         _viewAdapter = AlbumAdapter(bookmarksViewModel.albumValue.value!!, AlbumAdapter.Type.BOOKMARKED)
 
         // Fetch data
-        bookmarksViewModel.fetchAlbum()
+        bookmarksViewModel.fetchData()
 
         // Observe for album list
         bookmarksViewModel.albumValue.observe(viewLifecycleOwner) {

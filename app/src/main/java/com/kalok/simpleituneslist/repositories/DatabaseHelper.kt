@@ -4,19 +4,20 @@ import android.content.Context
 import androidx.room.Room
 
 object DatabaseHelper {
-    private const val DATABASE_NAME: String = "albums_db"
-    private var db: AlbumDatabase? = null
+    private val _databaseName: String = "albums_db"
+    private var _db: ItunesDatabase? = null
 
     fun setDb(context: Context) {
         // Get DB instance
-        db = Room.databaseBuilder(
-            context, AlbumDatabase::class.java, DATABASE_NAME
-        )
-            .build()
+        _db = Room.databaseBuilder(
+            context,
+            ItunesDatabase::class.java,
+            _databaseName
+        ).build()
     }
 
     fun getAlbumDao(): AlbumDao? {
         // Get album DAO
-        return db?.albumDao()
+        return _db?.albumDao()
     }
 }

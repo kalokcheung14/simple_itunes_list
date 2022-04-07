@@ -1,14 +1,21 @@
 package com.kalok.simpleituneslist.ui.bookmarks
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.kalok.simpleituneslist.repositories.DatabaseHelper
 import com.kalok.simpleituneslist.ui.home.HomeViewModel
 import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class BookmarksViewModel : HomeViewModel() {
-    fun fetchAlbum() {
+    init {
+        // Init mutable data value
+        albums.value = ArrayList()
+    }
+
+    fun fetchData() {
         // Get database album DAO and get all albums
         DatabaseHelper.getAlbumDao()?.apply {
             getAll()
@@ -24,7 +31,8 @@ class BookmarksViewModel : HomeViewModel() {
                             album,
                             // Set bookmarked to true since albums loaded from database are all bookmarked
                             true,
-                            compositeDisposable
+                            compositeDisposable,
+                            DatabaseHelper
                         )
                     })
 
@@ -37,5 +45,12 @@ class BookmarksViewModel : HomeViewModel() {
                     compositeDisposable.add(it)
                 }
         }
+    }
+
+    override fun onCleared() {
+        // Dispose API call
+        compositeDisposable.dispose()
+        compositeDisposable.clear()
+        super.onCleared()
     }
 }

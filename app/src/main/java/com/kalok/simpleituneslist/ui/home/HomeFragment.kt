@@ -40,7 +40,7 @@ class HomeFragment : Fragment() {
         val albumRecyclerView = binding.albumRecyclerView
 
         // Fetch data
-        homeViewModel.fetchAlbums()
+        homeViewModel.fetchData()
 
         // Observe for album list to update
         _viewAdapter = AlbumAdapter(homeViewModel.albumValue.value!!)

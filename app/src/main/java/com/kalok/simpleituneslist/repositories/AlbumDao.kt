@@ -17,6 +17,9 @@ interface AlbumDao {
     @Update
     fun updateAlbum(album: Album)
 
+    @Query("SELECT * FROM albums WHERE collection_id = :collectionId")
+    fun getByCollectionId(collectionId: Long): Single<List<Album>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(album: Album): Completable
 

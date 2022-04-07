@@ -14,14 +14,16 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class AlbumViewModel(
     val album: Album,
     bookmarked: Boolean,
-    private val compositeDisposable: CompositeDisposable?) {
+    private val _compositeDisposable: CompositeDisposable?,
+    private val _databaseHelper: DatabaseHelper,
+) {
     val albumName = album.collectionName
-    private val artworkUrl = album.artworkUrl60
+    private val _artworkUrl = album.artworkUrl60
     val artwork: RequestCreator?
         get() =
             // Use Picasso to load image from URL
             Picasso.get()
-                .load(artworkUrl)
+                .load(_artworkUrl)
                 .placeholder(android.R.color.darker_gray)
                 .fit()
     private var _bookmarked = MutableLiveData<Boolean>()
@@ -37,15 +39,27 @@ class AlbumViewModel(
         _bookmarked.value = bookmarked
 
         // Update bookmarked album to database
-        DatabaseHelper.getAlbumDao()?.apply {
-            // Insert if the album is bookmarked
-            // Otherwise delete the album from the database
-            if (bookmarked) {
-                insert(album)
-            } else {
-                delete(album)
-            }
+        _databaseHelper.getAlbumDao()?.apply {
+            // Get bookmarked album from database by collection ID
+            getByCollectionId(album.collectionId)
                 .subscribeOn(Schedulers.io())
+                .concatMapCompletable {
+                    // If album is found in bookmark
+                    // update the album object with the ID for insert/delete function to find the record
+                    if (it.isNotEmpty()) {
+                        it[0].let {
+                            album.id = it.id
+                        }
+                    }
+
+                    // Insert if the album is bookmarked
+                    // Otherwise delete the album from the database
+                    if (bookmarked) {
+                        insert(album)
+                    } else {
+                        delete(album)
+                    }
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     Log.d("album", "bookmark = $bookmarked")
@@ -53,7 +67,7 @@ class AlbumViewModel(
                     Log.e("album", it.message ?: "No error message")
                 }).let {
                     // Add disposable call into composite disposable object for disposal
-                    compositeDisposable?.add(it)
+                    _compositeDisposable?.add(it)
                 }
         }
     }

@@ -35,13 +35,20 @@ class AlbumAdapter(private val albums: ArrayList<AlbumViewModel>, private val ty
                             // If album is not bookmarked, bookmark the album and set the icon to solid
                             bookmarkImageView.setImageResource(R.drawable.outline_bookmark_24)
                             album.setBookmark(true)
+                            // Update display
+                            notifyItemChanged(position)
                         } else {
                             // If album is bookmarked, remove the album from bookmark and set the icon to outline
                             bookmarkImageView.setImageResource(R.drawable.outline_bookmark_border_24)
                             album.setBookmark(false)
-                            if (type == Type.BOOKMARKED) {
-                                albums.remove(album)
-                                notifyItemRemoved(position)
+                            when (type) {
+                                // Remove item from bookmark list and notify UI row item change
+                                Type.BOOKMARKED -> {
+                                    albums.remove(album)
+                                    notifyItemRemoved(position)
+                                }
+                                // Update display
+                                Type.ALBUM -> notifyItemChanged(position)
                             }
                         }
                     }
