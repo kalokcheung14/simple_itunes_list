@@ -4,18 +4,15 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class NetworkAlbumRepository: AlbumRepository() {
-    companion object {
-        private const val BASE_URL = "https://itunes.apple.com"
-        val instance = NetworkAlbumRepository()
-    }
+class RetrofitApiDataRepository: ApiDataRepository() {
+    private val _baseUrl = "https://itunes.apple.com"
 
     init {
-        // Call and parse API response using Retrofit and RxJava
+        // Create API instance using Retrofit and RxJava
         api = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(_baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .build().create(AlbumApi::class.java)
+            .build().create(DataApi::class.java)
     }
 }

@@ -4,37 +4,85 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.kalok.simpleituneslist.adapters.AlbumAdapter
+import com.kalok.simpleituneslist.adapters.BookmarkListAdapter
 import com.kalok.simpleituneslist.databinding.FragmentBookmarksBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BookmarksFragment : Fragment() {
+    private var _binding: FragmentBookmarksBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+    private lateinit var _viewAdapter : AlbumAdapter
+    private lateinit var _viewManager : RecyclerView.LayoutManager
 
-private var _binding: FragmentBookmarksBinding? = null
-  // This property is only valid between onCreateView and
-  // onDestroyView.
-  private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val bookmarksViewModel =
+            ViewModelProvider(this)[BookmarksViewModel::class.java]
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    val bookmarksViewModel =
-            ViewModelProvider(this).get(BookmarksViewModel::class.java)
+        _binding = FragmentBookmarksBinding.inflate(inflater, container, false)
+        val root: View = binding.root
 
-    _binding = FragmentBookmarksBinding.inflate(inflater, container, false)
-    val root: View = binding.root
+        // Handle progress bar show and hide
+        val progressBar = binding.progressBar
+        progressBar.show()
 
-    val textView: TextView = binding.textBookmarks
-    bookmarksViewModel.text.observe(viewLifecycleOwner) {
-      textView.text = it
+        val albumRecyclerView = binding.albumRecyclerView
+
+        // Set up viewManager to handle recycler view row layout
+        _viewManager = LinearLayoutManager(context)
+        // Set up view adapter for recycler view dataset
+        _viewAdapter = BookmarkListAdapter(bookmarksViewModel.albumValue.value!!, bookmarksViewModel)
+
+        // Set no bookmark notice invisible
+        val noBookmarkTextView = binding.noBookmarkTextview
+        noBookmarkTextView.visibility = View.GONE
+
+        // Fetch data
+        bookmarksViewModel.fetchData()
+
+        // Observe for album list
+        bookmarksViewModel.albumValue.observe(viewLifecycleOwner) {
+            // Update the recycler view data when update is observed
+            if (it.isEmpty()) {
+                // If album list is empty
+                // show the no bookmarks notice
+                noBookmarkTextView.visibility = View.VISIBLE
+            } else {
+                // If album list is empty
+                // show the no bookmarks notice
+                noBookmarkTextView.visibility = View.GONE
+                // Load the data to adapter if the list is not empty
+                _viewAdapter.setDataset(it)
+            }
+            progressBar.hide()
+        }
+
+        // Retain recycler view scroll position when fragment reattached
+        _viewAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
+        // Set up recycler view
+        albumRecyclerView.apply {
+            setHasFixedSize(true)
+            minimumHeight = 90
+            layoutManager = _viewManager
+            adapter = _viewAdapter
+        }
+
+        return root
     }
-    return root
-  }
 
-override fun onDestroyView() {
+    override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
