@@ -40,7 +40,7 @@ class BookmarksFragment : Fragment() {
         // Set up viewManager to handle recycler view row layout
         _viewManager = LinearLayoutManager(context)
         // Set up view adapter for recycler view dataset
-        _viewAdapter = AlbumAdapter(bookmarksViewModel.albumValue.value!!)
+        _viewAdapter = AlbumAdapter(bookmarksViewModel.albumValue.value!!, AlbumAdapter.Type.BOOKMARKED)
 
         // Fetch data
         bookmarksViewModel.fetchAlbum()
