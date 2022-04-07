@@ -39,15 +39,19 @@ open class HomeViewModel : ViewModel() {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ bookmarkList ->
+                // Get a list of collection ID of bookmarked albums
+                val bookmarkCollectionIdList = bookmarkList.map { it.collectionId }
+
                 // Get album list from response and replace the current list
                 val albumList = ArrayList<AlbumViewModel>()
+
                 // add result to an array list
                 albumList.addAll(networkAlbumList.map { album ->
                     // Encapsulate album with ViewModel
                     AlbumViewModel(
                         album,
                         // Update bookmarked flag based on whether the album is also contained in the bookmarked database
-                        bookmarkList.contains(album),
+                        bookmarkCollectionIdList.contains(album.collectionId),
                         compositeDisposable
                     )
                 })
