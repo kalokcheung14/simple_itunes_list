@@ -79,7 +79,7 @@ class HomeViewModel @Inject constructor(
     override fun onCleared() {
         // Dispose Data streams
         _compositeDisposable.clear()
-//        _compositeDisposable.dispose()
+        _compositeDisposable.dispose()
         super.onCleared()
     }
 }
