@@ -59,6 +59,10 @@ class HomeFragment : Fragment() {
             minimumHeight = 90
             layoutManager = _viewManager
             adapter = _viewAdapter
+            // Disable item change default animation
+            (itemAnimator as SimpleItemAnimator).apply {
+                supportsChangeAnimations = false
+            }
         }
 
         return root

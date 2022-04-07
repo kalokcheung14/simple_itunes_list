@@ -4,7 +4,7 @@ import com.kalok.simpleituneslist.models.DataResult
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.http.GET
 
-open class ApiDataRepository {
+abstract class ApiDataRepository {
     lateinit var api: DataApi
 
     var cachedAlbum = DataResult(0, ArrayList())
@@ -16,14 +16,9 @@ open class ApiDataRepository {
                 cachedAlbum = it
             }
         } else {
-            // Return cached albums first
-            // then API data
+            // Return cached albums
             Observable
                 .just(cachedAlbum)
-                .mergeWith(api.getAlbums())
-                .doOnNext {
-                    cachedAlbum = it
-                }
         }
     }
 }
