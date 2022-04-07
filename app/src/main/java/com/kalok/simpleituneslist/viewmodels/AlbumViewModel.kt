@@ -43,7 +43,7 @@ class AlbumViewModel(
             // Get bookmarked album from database by collection ID
             getByCollectionId(album.collectionId)
                 .subscribeOn(Schedulers.io())
-                .concatMapCompletable {
+                .flatMapCompletable {
                     // If album is found in bookmark
                     // update the album object with the ID for insert/delete function to find the record
                     if (it.isNotEmpty()) {
