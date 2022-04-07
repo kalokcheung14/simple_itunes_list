@@ -3,11 +3,11 @@ package com.kalok.simpleituneslist.repositories
 import android.content.Context
 import androidx.room.Room
 
-object DatabaseHelper {
+class DatabaseHelper(context: Context) {
     private val _databaseName: String = "albums_db"
     private var _db: ItunesDatabase? = null
 
-    fun setDb(context: Context) {
+    init {
         // Get DB instance
         _db = Room.databaseBuilder(
             context,

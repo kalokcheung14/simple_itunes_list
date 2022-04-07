@@ -5,19 +5,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kalok.simpleituneslist.models.Album
+import com.kalok.simpleituneslist.repositories.ApiDataRepository
 import com.kalok.simpleituneslist.repositories.DatabaseHelper
-import com.kalok.simpleituneslist.repositories.RetrofitApiDataRepository
 import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.toObservable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
-class HomeViewModel () : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val _repo: ApiDataRepository,
+    private val _dbHelper: DatabaseHelper,
+    private val _compositeDisposable: CompositeDisposable
+) : ViewModel() {
     private var albums = MutableLiveData<ArrayList<AlbumViewModel>>()
     val albumValue: LiveData<ArrayList<AlbumViewModel>>
         get() = albums
-    private var compositeDisposable = CompositeDisposable()
 
     init {
         // Init mutable data value
@@ -25,8 +30,6 @@ class HomeViewModel () : ViewModel() {
     }
 
     fun fetchData() {
-        val _repo = RetrofitApiDataRepository().api
-
         // Subscribe to API call response
         var networkAlbumList: List<Album> = emptyList()
         _repo.getAlbums()
@@ -36,7 +39,7 @@ class HomeViewModel () : ViewModel() {
                 networkAlbumList = it.results
 
                 // Read bookmarked albums from database
-                DatabaseHelper.getAlbumDao()!!.getAll()
+                _dbHelper.getAlbumDao()!!.getAll()
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ bookmarkList ->
@@ -53,8 +56,8 @@ class HomeViewModel () : ViewModel() {
                         album,
                         // Update bookmarked flag based on whether the album is also contained in the bookmarked database
                         bookmarkCollectionIdList.contains(album.collectionId),
-                        compositeDisposable,
-                        DatabaseHelper
+                        _compositeDisposable,
+                        _dbHelper
                     )
                 })
 
@@ -65,14 +68,14 @@ class HomeViewModel () : ViewModel() {
                 Log.d("album", it.message ?: "No error message")
             }).let {
                 // Store disposable API call in composite disposable object
-                compositeDisposable.add(it)
+                _compositeDisposable.add(it)
             }
     }
 
     override fun onCleared() {
         // Dispose API call
-        compositeDisposable.dispose()
-        compositeDisposable.clear()
+        _compositeDisposable.dispose()
+        _compositeDisposable.clear()
         super.onCleared()
     }
 }

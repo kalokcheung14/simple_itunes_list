@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kalok.simpleituneslist.adapters.AlbumAdapter
 import com.kalok.simpleituneslist.databinding.FragmentBookmarksBinding
-import com.kalok.simpleituneslist.databinding.FragmentHomeBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BookmarksFragment : Fragment() {
     private var _binding: FragmentBookmarksBinding? = null
     // This property is only valid between onCreateView and
@@ -42,13 +43,27 @@ class BookmarksFragment : Fragment() {
         // Set up view adapter for recycler view dataset
         _viewAdapter = AlbumAdapter(bookmarksViewModel.albumValue.value!!, AlbumAdapter.Type.BOOKMARKED)
 
+        // Set no bookmark notice invisible
+        val noBookmarkTextView = binding.noBookmarkTextview
+        noBookmarkTextView.visibility = View.GONE
+
         // Fetch data
         bookmarksViewModel.fetchData()
 
         // Observe for album list
         bookmarksViewModel.albumValue.observe(viewLifecycleOwner) {
             // Update the recycler view data when update is observed
-            _viewAdapter.setDataset(it)
+            if (it.isEmpty()) {
+                // If album list is empty
+                // show the no bookmarks notice
+                noBookmarkTextView.visibility = View.VISIBLE
+            } else {
+                // If album list is empty
+                // show the no bookmarks notice
+                noBookmarkTextView.visibility = View.GONE
+                // Load the data to adapter if the list is not empty
+                _viewAdapter.setDataset(it)
+            }
             progressBar.hide()
         }
 
