@@ -1,12 +1,11 @@
 package com.kalok.simpleituneslist.viewmodels
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
 import com.kalok.simpleituneslist.models.Album
 import com.kalok.simpleituneslist.repositories.DatabaseHelper
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.RequestCreator
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -17,18 +16,20 @@ class AlbumViewModel(
     private val _compositeDisposable: CompositeDisposable?,
     private val _databaseHelper: DatabaseHelper,
 ) {
-    val albumName = album.collectionName
-    private val _artworkUrl = album.artworkUrl60
-    val artwork: RequestCreator?
-        get() =
-            // Use Picasso to load image from URL
+    companion object {
+        // Function to bind image to ImageView
+        @JvmStatic
+        @BindingAdapter("imageUrl")
+        fun setImageUrl(view: ImageView, imageUrl: String) {
             Picasso.get()
-                .load(_artworkUrl)
+                .load(imageUrl)
                 .placeholder(android.R.color.darker_gray)
-                .fit()
-    private var _bookmarked = MutableLiveData<Boolean>()
-    val bookmarkedValue: LiveData<Boolean>
-        get() = _bookmarked
+                .fit().into(view)
+        }
+    }
+
+    val albumName = album.collectionName
+    val artworkUrl = album.artworkUrl60
 
     init {
         _bookmarked.value = bookmarked

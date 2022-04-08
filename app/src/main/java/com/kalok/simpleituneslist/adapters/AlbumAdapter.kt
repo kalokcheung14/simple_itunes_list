@@ -17,9 +17,8 @@ abstract class AlbumAdapter(
         fun bind(album: AlbumViewModel, position: Int) {
             // Bind data to row item view
             with(_binding) {
-                albumNameTextview.text = album.albumName
-                album.artwork?.into(artworkImageView)
-
+                this.album = album
+                this.executePendingBindings()
                 // Set bookmark icon according to bookmark flag in album
                 album.bookmarkedValue.value?.let { bookmarked ->
                     if (bookmarked) {
@@ -33,15 +32,16 @@ abstract class AlbumAdapter(
                         if (!bookmarked) {
                             // If album is not bookmarked, bookmark the album and set the icon to solid
                             bookmarkImageView.setImageResource(R.drawable.outline_bookmark_24)
-                            album.setBookmark(true)
                             // Update display
                             notifyItemChanged(position)
                         } else {
                             // If album is bookmarked, remove the album from bookmark and set the icon to outline
                             bookmarkImageView.setImageResource(R.drawable.outline_bookmark_border_24)
-                            album.setBookmark(false)
                             handleRemoveBookmark(album, position)
                         }
+
+                        // Update bookmark flag to DB
+                        album.setBookmark(!bookmarked)
                     }
                 }
             }
