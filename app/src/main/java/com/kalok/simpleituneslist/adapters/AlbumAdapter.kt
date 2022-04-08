@@ -20,7 +20,7 @@ abstract class AlbumAdapter(
                 this.album = album
                 this.executePendingBindings()
                 // Set bookmark icon according to bookmark flag in album
-                album.bookmarkedValue.value?.let { bookmarked ->
+                album.bookmarked.let { bookmarked ->
                     if (bookmarked) {
                         bookmarkImageView.setImageResource(R.drawable.outline_bookmark_24)
                     } else {
@@ -40,8 +40,8 @@ abstract class AlbumAdapter(
                             handleRemoveBookmark(album, position)
                         }
 
-                        // Update bookmark flag to DB
-                        album.setBookmark(!bookmarked)
+                        // Update bookmark flag to viewModel and DB
+                        album.bookmarked = !bookmarked
                     }
                 }
             }
