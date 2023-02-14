@@ -49,7 +49,7 @@ class BookmarksFragment : Fragment() {
         // Set up view adapter for recycler view dataset
         _viewAdapter = BookmarkListAdapter(bookmarksViewModel.albumValue.value!!, bookmarksViewModel)
 
-        // Set no bookmark notice invisible
+        // Set no bookmark notice invisible when loading
         val noBookmarkTextView = binding.noBookmarkTextview
         noBookmarkTextView.visibility = View.GONE
 
@@ -61,19 +61,13 @@ class BookmarksFragment : Fragment() {
             // Stop Shimmer animation
             _shimmerLayout.stopShimmer()
 
-            // Update the recycler view data when update is observed
-            if (it.isEmpty()) {
-                // If album list is empty
-                // show the no bookmarks notice
-                noBookmarkTextView.visibility = View.VISIBLE
-            } else {
-                // If album list is empty
-                // show the no bookmarks notice
-                noBookmarkTextView.visibility = View.GONE
+            // Update the UI display when update on album list is observed by passing data variable to the UI
+            binding.albumListIsEmpty = it.isEmpty()
+
+            // Update the adapter when update on album list is observed
+            if (it.isNotEmpty()) {
                 // Load the data to adapter if the list is not empty
                 _viewAdapter.setDataset(it)
-                // Set recycler view to visible to display data
-                albumRecyclerView.visibility = View.VISIBLE
             }
         }
 

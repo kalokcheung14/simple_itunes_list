@@ -44,7 +44,7 @@
                     app:layout_constraintEnd_toStartOf="@id/bookmark_image_view"
                     android:maxLines="2"
                     android:ellipsize="end"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:gravity="center_vertical"
                     android:textColor="@color/black"/>
                 <ImageView
