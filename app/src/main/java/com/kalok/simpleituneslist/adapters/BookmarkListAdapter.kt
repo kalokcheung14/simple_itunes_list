@@ -13,7 +13,7 @@ class BookmarkListAdapter(
 ) {
     override fun handleRemoveBookmark(album: AlbumViewModel, position: Int) {
         _albums.remove(album)
-        notifyItemRemoved(position)
+        notifyDataSetChanged()
         // Update parent UI by posting data to parent view model
         if (_albums.isEmpty()) {
             (_parentViewModel as BookmarksViewModel).setAlbumView(_albums)

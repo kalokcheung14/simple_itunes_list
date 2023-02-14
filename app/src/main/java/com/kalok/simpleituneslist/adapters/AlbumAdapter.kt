@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.kalok.simpleituneslist.R
 import com.kalok.simpleituneslist.databinding.AlbumItemRowBinding
 import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
 
@@ -23,19 +22,16 @@ abstract class AlbumAdapter(
                 album.bookmarked.let { bookmarked ->
                     // Set on click listener for bookmark icon
                     bookmarkImageView.setOnClickListener {
+                        // Update bookmark flag to viewModel and DB
+                        album.bookmarked = !bookmarked
+
                         if (!bookmarked) {
-                            // If album is not bookmarked, bookmark the album and set the icon to solid
-                            bookmarkImageView.setImageResource(R.drawable.outline_bookmark_24)
                             // Update display
                             notifyItemChanged(position)
                         } else {
                             // If album is bookmarked, remove the album from bookmark and set the icon to outline
-                            bookmarkImageView.setImageResource(R.drawable.outline_bookmark_border_24)
                             handleRemoveBookmark(album, position)
                         }
-
-                        // Update bookmark flag to viewModel and DB
-                        album.bookmarked = !bookmarked
                     }
                 }
             }
