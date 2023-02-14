@@ -21,12 +21,6 @@ abstract class AlbumAdapter(
                 this.executePendingBindings()
                 // Set bookmark icon according to bookmark flag in album
                 album.bookmarked.let { bookmarked ->
-                    if (bookmarked) {
-                        bookmarkImageView.setImageResource(R.drawable.outline_bookmark_24)
-                    } else {
-                        bookmarkImageView.setImageResource(R.drawable.outline_bookmark_border_24)
-                    }
-
                     // Set on click listener for bookmark icon
                     bookmarkImageView.setOnClickListener {
                         if (!bookmarked) {
