@@ -3,6 +3,7 @@ package com.kalok.simpleituneslist
 import android.content.Context
 import com.kalok.simpleituneslist.repositories.ApiDataRepository
 import com.kalok.simpleituneslist.repositories.DatabaseHelper
+import com.kalok.simpleituneslist.repositories.DatabaseHelperImpl
 import com.kalok.simpleituneslist.repositories.RetrofitApiDataRepository
 import dagger.Module
 import dagger.Provides
@@ -18,7 +19,7 @@ class AppModule {
     fun provideApiDataRepository(): ApiDataRepository = RetrofitApiDataRepository()
 
     @Provides
-    fun provideDatabaseHelper(@ApplicationContext context: Context): DatabaseHelper = DatabaseHelper(context)
+    fun provideDatabaseHelper(@ApplicationContext context: Context): DatabaseHelper = DatabaseHelperImpl(context)
 
     @Provides
     fun provideCompositeDisposable(): CompositeDisposable = CompositeDisposable()
