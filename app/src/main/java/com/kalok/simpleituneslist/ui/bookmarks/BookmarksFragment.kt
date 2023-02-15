@@ -48,7 +48,7 @@ class BookmarksFragment : Fragment() {
         // Set up viewManager to handle recycler view row layout
         _viewManager = LinearLayoutManager(context)
         // Set up view adapter for recycler view dataset
-        _viewAdapter = BookmarkListAdapter(bookmarksViewModel.albumValue.value!!, bookmarksViewModel)
+        _viewAdapter = BookmarkListAdapter(bookmarksViewModel.albumValue.value!!, bookmarksViewModel, bookmarksViewModel.bookmarkRepository)
 
         // Set no bookmark notice invisible when loading
         val noBookmarkTextView = binding.noBookmarkTextview

@@ -1,6 +1,7 @@
 package com.kalok.simpleituneslist.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,11 +49,13 @@ class HomeFragment : Fragment() {
         // Set recycler view invisible at the beginning for loading
         albumRecyclerView.visibility = View.INVISIBLE
 
+        Log.d("ALBUM", "hi")
+
         // Fetch data
         homeViewModel.fetchData()
 
         // Observe for album list to update
-        _viewAdapter = HomeListAdapter(homeViewModel.albumValue.value!!)
+        _viewAdapter = HomeListAdapter(homeViewModel.albumValue.value!!, homeViewModel, homeViewModel.bookmarkRepository)
         homeViewModel.albumValue.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 // Update the recycler view data when update is observed

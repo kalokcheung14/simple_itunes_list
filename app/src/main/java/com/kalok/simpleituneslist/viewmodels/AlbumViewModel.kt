@@ -16,17 +16,6 @@ class AlbumViewModel(
     private val _compositeDisposable: CompositeDisposable?,
     private val _databaseHelper: DatabaseHelper,
 ) {
-    companion object {
-        // Function to bind image to ImageView
-        @JvmStatic
-        @BindingAdapter("imageUrl")
-        fun setImageUrl(view: ImageView, imageUrl: String) {
-            Picasso.get()
-                .load(imageUrl)
-                .placeholder(android.R.color.darker_gray)
-                .fit().into(view)
-        }
-    }
 
     val albumName = album.collectionName
     val artworkUrl = album.artworkUrl60

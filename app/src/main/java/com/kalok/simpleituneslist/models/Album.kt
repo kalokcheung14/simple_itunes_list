@@ -14,4 +14,5 @@ data class Album(
     val collectionName: String,
     @ColumnInfo(name = "artwork_url")
     val artworkUrl60: String,
+    var bookmarked: Boolean = false
 )

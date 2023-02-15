@@ -1,14 +1,17 @@
 package com.kalok.simpleituneslist.adapters
 
 import androidx.lifecycle.ViewModel
-import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
+import com.kalok.simpleituneslist.models.Album
+import com.kalok.simpleituneslist.repositories.BookmarkRepository
 
 class HomeListAdapter(
-    albums: ArrayList<AlbumViewModel>,
-    _parentViewModel: ViewModel? = null
+    albums: ArrayList<Album>,
+    _parentViewModel: ViewModel? = null,
+    _bookmarkRepository: BookmarkRepository
 ): AlbumAdapter(
     albums,
-    _parentViewModel
+    _parentViewModel,
+    _bookmarkRepository
 )  {
-    override fun handleRemoveBookmark(album: AlbumViewModel, position: Int) = notifyItemChanged(position)
+    override fun handleRemoveBookmark(album: Album, position: Int) = notifyItemChanged(position)
 }

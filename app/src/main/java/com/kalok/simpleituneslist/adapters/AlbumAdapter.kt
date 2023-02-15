@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.kalok.simpleituneslist.databinding.AlbumItemRowBinding
-import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
+import com.kalok.simpleituneslist.models.Album
+import com.kalok.simpleituneslist.repositories.BookmarkRepository
 
 abstract class AlbumAdapter(
-    protected var _albums: ArrayList<AlbumViewModel>,
-    protected val _parentViewModel: ViewModel? = null
+    protected var _albums: ArrayList<Album>,
+    protected val _parentViewModel: ViewModel? = null,
+    private val _bookmarkRepository: BookmarkRepository
 ): RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
     init {
         // Retain recycler view scroll position when fragment reattached
@@ -19,7 +21,7 @@ abstract class AlbumAdapter(
     }
 
     inner class ViewHolder(private val _binding: AlbumItemRowBinding): RecyclerView.ViewHolder(_binding.root) {
-        fun bind(album: AlbumViewModel, position: Int) {
+        fun bind(album: Album, position: Int) {
             // Bind data to row item view
             with(_binding) {
                 this.album = album
@@ -30,6 +32,7 @@ abstract class AlbumAdapter(
                     bookmarkImageView.setOnClickListener {
                         // Update bookmark flag to viewModel and DB
                         album.bookmarked = !bookmarked
+                        _bookmarkRepository.updateBookmark(album)
 
                         if (!bookmarked) {
                             // Update display
@@ -44,9 +47,9 @@ abstract class AlbumAdapter(
         }
     }
 
-    abstract fun handleRemoveBookmark(album: AlbumViewModel, position: Int)
+    abstract fun handleRemoveBookmark(album: Album, position: Int)
 
-    fun setDataset(data : ArrayList<AlbumViewModel>) {
+    fun setDataset(data : ArrayList<Album>) {
         // Check data differences
         val diffCallback = ItemListDiffUtil(_albums, data)
         val diffResult = DiffUtil.calculateDiff(diffCallback)

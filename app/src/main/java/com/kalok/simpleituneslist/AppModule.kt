@@ -1,10 +1,7 @@
 package com.kalok.simpleituneslist
 
 import android.content.Context
-import com.kalok.simpleituneslist.repositories.ApiDataRepository
-import com.kalok.simpleituneslist.repositories.DatabaseHelper
-import com.kalok.simpleituneslist.repositories.DatabaseHelperImpl
-import com.kalok.simpleituneslist.repositories.RetrofitApiDataRepository
+import com.kalok.simpleituneslist.repositories.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,4 +20,7 @@ class AppModule {
 
     @Provides
     fun provideCompositeDisposable(): CompositeDisposable = CompositeDisposable()
+
+    @Provides
+    fun provideBookmarkRepository(databaseHelper: DatabaseHelper, compositeDisposable: CompositeDisposable): BookmarkRepository = BookmarkRepositoryImpl(databaseHelper, compositeDisposable)
 }

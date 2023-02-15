@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kalok.simpleituneslist.models.Album
 import com.kalok.simpleituneslist.repositories.ApiDataRepository
+import com.kalok.simpleituneslist.repositories.BookmarkRepository
 import com.kalok.simpleituneslist.repositories.DatabaseHelper
-import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -18,10 +18,11 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val _repo: ApiDataRepository,
     private val _dbHelper: DatabaseHelper,
-    private val _compositeDisposable: CompositeDisposable
+    private val _compositeDisposable: CompositeDisposable,
+    val bookmarkRepository: BookmarkRepository
 ) : ViewModel() {
-    private var albums = MutableLiveData<ArrayList<AlbumViewModel>>()
-    val albumValue: LiveData<ArrayList<AlbumViewModel>>
+    private var albums = MutableLiveData<ArrayList<Album>>()
+    val albumValue: LiveData<ArrayList<Album>>
         get() = albums
 
     init {
@@ -50,19 +51,14 @@ class HomeViewModel @Inject constructor(
                 val bookmarkCollectionIdList = bookmarkAlbumList.map { it.collectionId }
 
                 // Get album list from response and replace the current list
-                val albumList = ArrayList<AlbumViewModel>()
+                val albumList = ArrayList<Album>()
 
                 // add result to an array list
-                albumList.addAll(networkAlbumList.map { album ->
-                    // Encapsulate album with ViewModel
-                    AlbumViewModel(
-                        album,
-                        // Update bookmarked flag based on whether the album is also contained in the bookmarked database
-                        bookmarkCollectionIdList.contains(album.collectionId),
-                        _compositeDisposable,
-                        _dbHelper
-                    )
-                })
+                albumList.addAll(networkAlbumList)
+
+                albumList.forEach {
+                    Log.d("ALBUM", it.collectionName)
+                }
 
                 // Update list
                 albums.value = albumList

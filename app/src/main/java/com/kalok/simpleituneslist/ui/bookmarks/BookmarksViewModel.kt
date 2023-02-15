@@ -4,8 +4,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.kalok.simpleituneslist.models.Album
+import com.kalok.simpleituneslist.repositories.BookmarkRepository
 import com.kalok.simpleituneslist.repositories.DatabaseHelper
-import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -15,10 +16,11 @@ import javax.inject.Inject
 @HiltViewModel
 class BookmarksViewModel @Inject constructor(
     private val _dbHelper: DatabaseHelper,
-    private val _compositeDisposable: CompositeDisposable
+    private val _compositeDisposable: CompositeDisposable,
+    val bookmarkRepository: BookmarkRepository
 ) : ViewModel() {
-    private var albums = MutableLiveData<ArrayList<AlbumViewModel>>()
-    val albumValue: LiveData<ArrayList<AlbumViewModel>>
+    private var albums = MutableLiveData<ArrayList<Album>>()
+    val albumValue: LiveData<ArrayList<Album>>
         get() = albums
 
     init {
@@ -34,18 +36,9 @@ class BookmarksViewModel @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ albumResponse ->
                     // Get album list from response and replace the current list
-                    val albumList = ArrayList<AlbumViewModel>()
+                    val albumList = ArrayList<Album>()
                     // Add all loaded albums to an array list
-                    albumList.addAll(albumResponse.map { album ->
-                        // Encapsulate album with ViewModel
-                        AlbumViewModel(
-                            album,
-                            // Set bookmarked to true since albums loaded from database are all bookmarked
-                            true,
-                            _compositeDisposable,
-                            _dbHelper
-                        )
-                    })
+                    albumList.addAll(albumResponse)
 
                     // Update album list
                     albums.value = albumList
@@ -58,7 +51,7 @@ class BookmarksViewModel @Inject constructor(
         }
     }
 
-    fun setAlbumView(albums: ArrayList<AlbumViewModel>) {
+    fun setAlbumView(albums: ArrayList<Album>) {
         this.albums.value = albums
     }
 
