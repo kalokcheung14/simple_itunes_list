@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.kalok.simpleituneslist.adapters.AlbumAdapter
 import com.kalok.simpleituneslist.adapters.BookmarkListAdapter
-import com.kalok.simpleituneslist.adapters.setup
 import com.kalok.simpleituneslist.databinding.FragmentBookmarksBinding
+import com.kalok.simpleituneslist.utils.setup
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

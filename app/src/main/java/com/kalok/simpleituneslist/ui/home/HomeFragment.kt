@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.kalok.simpleituneslist.adapters.AlbumAdapter
 import com.kalok.simpleituneslist.adapters.HomeListAdapter
-import com.kalok.simpleituneslist.adapters.setup
+import com.kalok.simpleituneslist.utils.setup
 import com.kalok.simpleituneslist.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
