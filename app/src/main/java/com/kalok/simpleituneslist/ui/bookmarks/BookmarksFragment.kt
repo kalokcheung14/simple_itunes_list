@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.kalok.simpleituneslist.adapters.AlbumAdapter
 import com.kalok.simpleituneslist.adapters.BookmarkListAdapter
+import com.kalok.simpleituneslist.adapters.setup
 import com.kalok.simpleituneslist.databinding.FragmentBookmarksBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -71,13 +72,9 @@ class BookmarksFragment : Fragment() {
             }
         }
 
-        // Retain recycler view scroll position when fragment reattached
-        _viewAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-
         // Set up recycler view
         albumRecyclerView.apply {
-            setHasFixedSize(true)
-            minimumHeight = 90
+            setup()
             layoutManager = _viewManager
             adapter = _viewAdapter
         }

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.kalok.simpleituneslist.databinding.AlbumItemRowBinding
 import com.kalok.simpleituneslist.viewmodels.AlbumViewModel
 
@@ -12,6 +13,11 @@ abstract class AlbumAdapter(
     protected var _albums: ArrayList<AlbumViewModel>,
     protected val _parentViewModel: ViewModel? = null
 ): RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
+    init {
+        // Retain recycler view scroll position when fragment reattached
+        stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
+    }
+
     inner class ViewHolder(private val _binding: AlbumItemRowBinding): RecyclerView.ViewHolder(_binding.root) {
         fun bind(album: AlbumViewModel, position: Int) {
             // Bind data to row item view
@@ -62,4 +68,14 @@ abstract class AlbumAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(_albums[position], position)
 
     override fun getItemCount(): Int = _albums.size
+}
+
+// Extension function to setup recycler view
+fun RecyclerView.setup() {
+    setHasFixedSize(true)
+    minimumHeight = 90
+    // Disable item change default animation
+    (itemAnimator as SimpleItemAnimator).apply {
+        supportsChangeAnimations = false
+    }
 }

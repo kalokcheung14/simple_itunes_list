@@ -8,10 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.kalok.simpleituneslist.adapters.AlbumAdapter
 import com.kalok.simpleituneslist.adapters.HomeListAdapter
+import com.kalok.simpleituneslist.adapters.setup
 import com.kalok.simpleituneslist.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -62,19 +62,11 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Retain recycler view scroll position when fragment reattached
-        _viewAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-
         // set up recycler view
         albumRecyclerView.apply {
-            setHasFixedSize(true)
-            minimumHeight = 90
+            setup()
             layoutManager = _viewManager
             adapter = _viewAdapter
-            // Disable item change default animation
-            (itemAnimator as SimpleItemAnimator).apply {
-                supportsChangeAnimations = false
-            }
         }
 
         return root
